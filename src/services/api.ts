@@ -14,8 +14,8 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Se não autorizado (401) e NÃO for a rota de verificação de usuário
-    if (error.response?.status === 401 && error.config?.url !== '/auth/me' && !window.location.pathname.includes('/login')) {
+    // Se não autorizado (401) e NÃO for a rota de verificação de usuário ou profile
+    if (error.response?.status === 401 && error.config?.url !== '/auth/me' && error.config?.url !== '/auth/profile' && !window.location.pathname.includes('/login')) {
       // Limpa dados do usuário e redireciona
       localStorage.removeItem('user');
       window.location.href = '/login';
