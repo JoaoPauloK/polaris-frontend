@@ -596,7 +596,7 @@ export default function ProjectDetailPage() {
                         </span>
                       </div>
                       <div className="text-xs text-orange-700 dark:text-orange-300 mt-1">
-                        {selection.additionalPhotosCount} foto(s) × R$ {parseFloat(project?.additionalPhotoPrice || 0).toFixed(2)}
+                        {selection.additionalPhotosCount} foto(s) × R$ {(project?.additionalPhotoPrice || 0).toFixed(2)}
                       </div>
                     </div>
                   )}
@@ -758,7 +758,7 @@ export default function ProjectDetailPage() {
                   <span>
                     {photos.length} foto(s) disponível(is) | 
                     Pacote: {project.packagePhotosCount} fotos | 
-                    Adicional: R$ {parseFloat(project.additionalPhotoPrice.toString()).toFixed(2)}
+                    Adicional: R$ {project.additionalPhotoPrice.toFixed(2)}
                   </span>
                 </div>
               </div>

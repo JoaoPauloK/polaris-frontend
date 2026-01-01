@@ -20,7 +20,7 @@ export default function NewProjectPage() {
     driveFolderUrl: '',
     packageSize: 30,
     extraPhotoPrice: 50.00,
-    status: 'active' as const,
+    status: 'active' as 'active' | 'completed' | 'archived',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 

@@ -24,10 +24,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   fetchProjects: async (status?: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await projectService.getAll(status);
-      if (response.success) {
-        set({ projects: response.data.projects });
-      }
+      const projects = await projectService.getProjects(status);
+      set({ projects });
     } catch (error: any) {
       set({ error: error.response?.data?.message || 'Failed to fetch projects' });
     } finally {
@@ -38,10 +36,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   fetchProject: async (id: number) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await projectService.getOne(id);
-      if (response.success) {
-        set({ currentProject: response.data.project });
-      }
+      const project = await projectService.getProjectById(id);
+      set({ currentProject: project });
     } catch (error: any) {
       set({ error: error.response?.data?.message || 'Failed to fetch project' });
     } finally {
@@ -52,14 +48,11 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   createProject: async (data: any) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await projectService.create(data);
-      if (response.success) {
-        set((state) => ({
-          projects: [response.data.project, ...state.projects],
-        }));
-        return response.data.project;
-      }
-      throw new Error('Failed to create project');
+      const project = await projectService.createProject(data);
+      set((state) => ({
+        projects: [project, ...state.projects],
+      }));
+      return project;
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || 'Failed to create project';
       set({ error: errorMsg });
@@ -72,18 +65,16 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   updateProject: async (id: number, data: any) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await projectService.update(id, data);
-      if (response.success) {
-        set((state) => ({
-          projects: state.projects.map((p) =>
-            p.id === id ? response.data.project : p
-          ),
-          currentProject:
-            state.currentProject?.id === id
-              ? response.data.project
-              : state.currentProject,
-        }));
-      }
+      const project = await projectService.updateProject(id, data);
+      set((state) => ({
+        projects: state.projects.map((p) =>
+          p.id === id ? project : p
+        ),
+        currentProject:
+          state.currentProject?.id === id
+            ? project
+            : state.currentProject,
+      }));
     } catch (error: any) {
       set({ error: error.response?.data?.message || 'Failed to update project' });
       throw error;
@@ -95,7 +86,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   deleteProject: async (id: number) => {
     set({ isLoading: true, error: null });
     try {
-      await projectService.delete(id);
+      await projectService.deleteProject(id);
       set((state) => ({
         projects: state.projects.filter((p) => p.id !== id),
         currentProject: state.currentProject?.id === id ? null : state.currentProject,
