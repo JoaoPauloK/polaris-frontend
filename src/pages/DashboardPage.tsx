@@ -312,7 +312,7 @@ export default function DashboardPage() {
               <div>
                 <div className="text-2xl font-bold">
                   {stats.totalPhotos > 0 
-                    ? ((stats.totalSelections / stats.totalPhotos) * 100).toFixed(1)
+                    ? (stats.totalPhotos > 0 ? ((stats.totalSelections / stats.totalPhotos) * 100).toFixed(1) : '0.0')
                     : 0}%
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-500">Taxa de seleção global</div>

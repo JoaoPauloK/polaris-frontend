@@ -228,7 +228,7 @@ export default function GalleryPage() {
               <h3 className="font-bold mb-2 text-gray-900 dark:text-white">Como funciona:</h3>
               <ul className="text-sm space-y-1 text-muted-foreground">
                 <li>• Seu pacote inclui <strong>{project.packagePhotosCount} fotos</strong></li>
-                <li>• Fotos adicionais custam <strong>R$ {parseFloat(project.additionalPhotoPrice).toFixed(2)}</strong> cada</li>
+                <li>• Fotos adicionais custam <strong>R$ {parseFloat(project.additionalPhotoPrice || '0').toFixed(2)}</strong> cada</li>
                 <li>• Clique nas fotos para selecioná-las</li>
                 <li>• Revise sua seleção e confirme no final</li>
               </ul>
@@ -281,10 +281,10 @@ export default function GalleryPage() {
                       <div className="text-right bg-primary/10 px-4 py-2 rounded-lg border-2 border-primary/20">
                         <div className="text-xs text-muted-foreground">Custo adicional</div>
                         <div className="text-2xl font-bold text-primary">
-                          R$ {totals.extraCost.toFixed(2)}
+                          R$ {parseFloat(totals.extraCost).toFixed(2)}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {totals.extraPhotos} × R$ {parseFloat(project.additionalPhotoPrice).toFixed(2)}
+                          {totals.extraPhotos} × R$ {parseFloat(project.additionalPhotoPrice || '0').toFixed(2)}
                         </div>
                       </div>
                     )}
@@ -399,7 +399,7 @@ export default function GalleryPage() {
                         
                         <div className="bg-primary/10 border-2 border-primary/30 rounded-lg p-4">
                           <div className="text-sm text-muted-foreground mb-1">Custo adicional</div>
-                          <div className="text-3xl font-bold text-primary">R$ {totals.extraCost.toFixed(2)}</div>
+                          <div className="text-3xl font-bold text-primary">R$ {parseFloat(totals.extraCost).toFixed(2)}</div>
                         </div>
                       </>
                     )}
@@ -439,7 +439,7 @@ export default function GalleryPage() {
                       </p>
                       <p className="text-yellow-700 dark:text-yellow-300">
                         Você selecionou {totals.extraPhotos} foto(s) além do seu pacote de {totals.packageSize} fotos.
-                        O custo adicional de <strong>R$ {totals.extraCost.toFixed(2)}</strong> será cobrado pelo fotógrafo.
+                        O custo adicional de <strong>R$ {parseFloat(totals.extraCost).toFixed(2)}</strong> será cobrado pelo fotógrafo.
                       </p>
                     </div>
                   </div>
