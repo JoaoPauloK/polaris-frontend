@@ -15,7 +15,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     // Se não autorizado (401) e NÃO for a rota de verificação de usuário
-    if (error.response?.status === 401 && error.config?.url !== '/auth/me') {
+    if (error.response?.status === 401 && error.config?.url !== '/auth/me' && !window.location.pathname.includes('/login')) {
       // Limpa dados do usuário e redireciona
       localStorage.removeItem('user');
       window.location.href = '/login';
