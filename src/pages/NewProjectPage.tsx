@@ -297,15 +297,13 @@ export default function NewProjectPage() {
                 <label className="block text-sm font-semibold mb-2">
                   Tamanho do Pacote (fotos inclusas)
                 </label>
-                <select
+                <input
+                  type="number"
+                  min="1"
                   value={formData.packageSize}
                   onChange={(e) => setFormData({ ...formData, packageSize: Number(e.target.value) })}
                   className="w-full px-4 py-3 border-2 border-border rounded-lg focus:outline-none focus:border-primary transition-colors"
-                >
-                  <option value={30}>30 fotos</option>
-                  <option value={60}>60 fotos</option>
-                  <option value={100}>100 fotos</option>
-                </select>
+                />
               </div>
 
               <div>
