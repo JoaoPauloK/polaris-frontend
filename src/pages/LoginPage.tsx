@@ -4,6 +4,7 @@ import { Camera, Mail, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/authStore';
+import SEO from '../components/SEO';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -26,7 +27,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-4">
+    <>
+      <SEO
+        title="Login - Polaris | Plataforma para Fotógrafos"
+        description="Acesse sua conta na Polaris e gerencie seus projetos fotográficos. Plataforma completa para fotógrafos profissionais com integração ao Google Drive."
+        keywords="login fotógrafo, plataforma fotográfica, google drive, gestão de projetos, fotógrafo profissional"
+        url="/login"
+        noIndex={true}
+      />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -101,5 +110,6 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </div>
+    </>
   );
 }

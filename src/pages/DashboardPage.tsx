@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Camera, LogOut, Folder, Image, CheckCircle, TrendingUp, 
   Clock, Users, Percent, ArrowUp, ArrowDown, Plus, 
-  Calendar, Eye, Download
+  Calendar, Eye, Download, Menu, X
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { projectService } from '../services/project.service';
 import type { Project } from '../types/project';
+import SEO from '../components/SEO';
 
 export default function DashboardPage() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stats, setStats] = useState({
     totalProjects: 0,
     activeProjects: 0,
@@ -106,7 +108,15 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+    <>
+      <SEO
+        title={`Dashboard - ${user?.name || 'Fotógrafo'} | Polaris`}
+        description={`Gerencie seus projetos fotográficos na Polaris. ${stats.totalProjects} projetos, ${stats.totalPhotos} fotos, ${stats.completionRate}% taxa de conclusão. Plataforma completa para fotógrafos profissionais.`}
+        keywords="dashboard fotógrafo, gestão de projetos, estatísticas fotográficas, projetos ativos, seleção de fotos, google drive"
+        url="/dashboard"
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header - Navbar melhorada */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4 py-4">
@@ -149,18 +159,75 @@ export default function DashboardPage() {
                 onClick={handleLogout}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary transition-colors"
+                className="hidden sm:flex items-center gap-2 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary transition-colors"
               >
                 <LogOut className="w-4 h-4" strokeWidth={2} />
                 <span className="font-medium">Sair</span>
               </motion.button>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl"
+            >
+              <div className="container mx-auto px-4 py-4 space-y-2">
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg bg-primary/10 text-primary font-semibold transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/projects"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Projetos
+                </Link>
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Perfil
+                </Link>
+                <div className="border-t border-gray-200 dark:border-gray-800 pt-2 mt-4">
+                  <span className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    {user?.name}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-left flex items-center gap-2 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                  >
+                    <LogOut className="w-4 h-4" strokeWidth={2} />
+                    Sair
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-8 md:py-12">
         {/* Welcome */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -344,7 +411,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Link
               to="/projects/new"
-              className="group relative overflow-hidden bg-gradient-to-br from-primary to-blue-600 text-white rounded-2xl p-8 hover:shadow-2xl hover:shadow-primary/50 transition-all"
+              className="group relative overflow-hidden bg-gradient-to-br from-primary to-blue-600 text-white rounded-2xl p-6 md:p-8 hover:shadow-2xl hover:shadow-primary/50 transition-all"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
               <div className="relative z-10">
@@ -362,7 +429,7 @@ export default function DashboardPage() {
 
             <Link
               to="/projects"
-              className="group relative overflow-hidden bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:border-primary hover:shadow-xl transition-all"
+              className="group relative overflow-hidden bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-6 md:p-8 hover:border-primary hover:shadow-xl transition-all"
             >
               <div className="relative z-10">
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -379,7 +446,7 @@ export default function DashboardPage() {
 
             <Link
               to="/profile"
-              className="group relative overflow-hidden bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-8 hover:border-primary hover:shadow-xl transition-all"
+              className="group relative overflow-hidden bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-6 md:p-8 hover:border-primary hover:shadow-xl transition-all"
             >
               <div className="relative z-10">
                 <div className="w-14 h-14 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -478,5 +545,6 @@ export default function DashboardPage() {
         </motion.div>
       </main>
     </div>
+    </>
   );
 }

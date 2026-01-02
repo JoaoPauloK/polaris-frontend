@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Edit, Trash2, RefreshCw, Copy, ExternalLink, Camera, Lock, Unlock, CheckCircle, DollarSign, User, Mail, Calendar, Download, LogOut } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Edit, Trash2, RefreshCw, Copy, ExternalLink, Camera, Lock, Unlock, CheckCircle, DollarSign, User, Mail, Calendar, Download, LogOut, Menu, X } from 'lucide-react';
 import { projectService } from '../services/project.service';
 import { driveService } from '../services/drive.service';
 import { selectionService } from '../services/selection.service';
@@ -27,6 +27,7 @@ export default function ProjectDetailPage() {
     success: boolean;
     message: string;
   } | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     loadProject();
@@ -87,7 +88,7 @@ export default function ProjectDetailPage() {
       
       setSyncResult({
         success: true,
-        message: `Sincronizado: ${result.syncedPhotos} de ${result.totalImages} fotos`,
+        message: `Sincronizado: ${result.data.syncedCount} de ${result.data.totalImages} fotos`,
       });
 
       // Recarrega o projeto e fotos para atualizar contadores
@@ -234,63 +235,120 @@ export default function ProjectDetailPage() {
                 onClick={handleLogout}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary transition-colors"
+                className="hidden sm:flex items-center gap-2 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary transition-colors"
               >
                 <LogOut className="w-4 h-4" strokeWidth={2} />
                 <span className="font-medium">Sair</span>
               </motion.button>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl"
+            >
+              <div className="container mx-auto px-4 py-4 space-y-2">
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/projects"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg bg-primary/10 text-primary font-semibold transition-colors"
+                >
+                  Projetos
+                </Link>
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Perfil
+                </Link>
+                <div className="border-t border-gray-200 dark:border-gray-800 pt-2 mt-4">
+                  <span className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    {user?.name}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-left flex items-center gap-2 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                  >
+                    <LogOut className="w-4 h-4" strokeWidth={2} />
+                    Sair
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Breadcrumb */}
         <Link
           to="/projects"
-          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-8 transition-colors font-medium"
+          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-6 md:mb-8 transition-colors font-medium text-sm md:text-base"
         >
           <ArrowLeft className="h-4 w-4" strokeWidth={2} />
           Voltar para Projetos
         </Link>
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl font-display font-bold text-gray-900 dark:text-white"
+              className="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-white"
             >
               {project.name}
             </motion.h1>
             {project.description && (
-              <p className="text-gray-600 dark:text-gray-300 mt-2">{project.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm md:text-base">{project.description}</p>
             )}
           </div>
 
           {user?.id === project.userId && (
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               {project.status === 'active' && (
                 <button
                   onClick={handleFinalizeProject}
                   disabled={finalizing}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors border-2 border-border disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors border-2 border-border disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
                 >
                   <CheckCircle className="h-4 w-4" />
-                  {finalizing ? 'Finalizando...' : 'Finalizar Projeto'}
+                  {finalizing ? 'Finalizando...' : 'Finalizar'}
                 </button>
               )}
               <button
                 onClick={() => navigate(`/projects/${id}/edit`)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors border-2 border-border"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors border-2 border-border text-sm md:text-base"
               >
                 <Edit className="h-4 w-4" />
                 Editar
               </button>
               <button
                 onClick={handleDelete}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors border-2 border-border"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors border-2 border-border text-sm md:text-base"
               >
                 <Trash2 className="h-4 w-4" />
                 Excluir
@@ -300,12 +358,12 @@ export default function ProjectDetailPage() {
         </div>
 
         {/* Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-card text-card-foreground rounded-lg p-6 border-2 border-border shadow-sm"
+            className="bg-card text-card-foreground rounded-lg p-4 md:p-6 border-2 border-border shadow-sm"
           >
             <div className="text-muted-foreground text-sm font-semibold mb-2">
               FOTOS
@@ -319,7 +377,7 @@ export default function ProjectDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-card text-card-foreground rounded-lg p-6 border-2 border-border shadow-sm"
+            className="bg-card text-card-foreground rounded-lg p-4 md:p-6 border-2 border-border shadow-sm"
           >
             <div className="text-muted-foreground text-sm font-semibold mb-2">
               SELEÇÕES
@@ -333,7 +391,7 @@ export default function ProjectDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-card text-card-foreground rounded-lg p-6 border-2 border-border shadow-sm"
+            className="bg-card text-card-foreground rounded-lg p-4 md:p-6 border-2 border-border shadow-sm"
           >
             <div className="text-muted-foreground text-sm font-semibold mb-2">
               STATUS
@@ -362,11 +420,11 @@ export default function ProjectDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-card text-card-foreground rounded-lg p-6 border-2 border-border shadow-sm mb-8"
+            className="bg-card text-card-foreground rounded-lg p-4 md:p-6 border-2 border-border shadow-sm mb-8"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   Sincronização com Google Drive
                 </h3>
                 <p className="text-muted-foreground text-sm">
@@ -376,14 +434,14 @@ export default function ProjectDetailPage() {
               <button
                 onClick={handleSync}
                 disabled={syncing}
-                className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors border-2 border-border ${
+                className={`inline-flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 rounded-lg font-semibold transition-colors border-2 border-border w-full sm:w-auto ${
                   syncing
                     ? 'bg-muted cursor-not-allowed text-muted-foreground'
                     : 'bg-primary text-primary-foreground hover:bg-primary/90'
                 }`}
               >
                 <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
-                {syncing ? 'Sincronizando...' : 'Sincronizar Fotos'}
+                {syncing ? 'Sincronizando...' : 'Sincronizar'}
               </button>
             </div>
 
@@ -415,53 +473,55 @@ export default function ProjectDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-card text-card-foreground rounded-lg p-6 border-2 border-border shadow-sm mb-8"
+            className="bg-card text-card-foreground rounded-lg p-4 md:p-6 border-2 border-border shadow-sm mb-8"
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">
                 Link da Galeria
               </h3>
               <div className="flex items-center gap-2">
                 {project.galleryStatus === 'closed' ? (
                   <>
-                    <Lock className="h-5 w-5 text-red-500" />
-                    <span className="text-sm font-semibold text-red-500">Galeria Fechada</span>
+                    <Lock className="h-4 w-4 md:h-5 md:w-5 text-red-500" />
+                    <span className="text-xs md:text-sm font-semibold text-red-500">Fechada</span>
                   </>
                 ) : (
                   <>
-                    <Unlock className="h-5 w-5 text-green-500" />
-                    <span className="text-sm font-semibold text-green-500">Galeria Aberta</span>
+                    <Unlock className="h-4 w-4 md:h-5 md:w-5 text-green-500" />
+                    <span className="text-xs md:text-sm font-semibold text-green-500">Aberta</span>
                   </>
                 )}
               </div>
             </div>
             
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex flex-col gap-4 mb-4">
               <input
                 type="text"
                 value={project.galleryUrl}
                 readOnly
-                className="flex-1 px-4 py-2 bg-background border-2 border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-3 bg-background border-2 border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
               />
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(project.galleryUrl);
-                  alert('Link copiado!');
-                }}
-                className="inline-flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors border-2 border-border"
-              >
-                <Copy className="h-4 w-4" />
-                Copiar
-              </button>
-              <a
-                href={project.galleryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-2 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors border-2 border-border"
-              >
-                <ExternalLink className="h-4 w-4" />
-                Abrir
-              </a>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(project.galleryUrl);
+                    alert('Link copiado!');
+                  }}
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors border-2 border-border text-sm md:text-base"
+                >
+                  <Copy className="h-4 w-4" />
+                  Copiar
+                </button>
+                <a
+                  href={project.galleryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-2 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors border-2 border-border text-sm md:text-base"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Abrir
+                </a>
+              </div>
             </div>
 
             {project.galleryStatus === 'closed' && (
@@ -473,7 +533,7 @@ export default function ProjectDetailPage() {
                 <button
                   onClick={handleReopenGallery}
                   disabled={reopening}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors border-2 border-border ${
+                  className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors border-2 border-border w-full sm:w-auto ${
                     reopening
                       ? 'bg-muted cursor-not-allowed text-muted-foreground'
                       : 'bg-primary text-primary-foreground hover:bg-primary/90'
@@ -493,7 +553,7 @@ export default function ProjectDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-card text-card-foreground rounded-lg p-6 border-2 border-border shadow-sm mb-8"
+            className="bg-card text-card-foreground rounded-lg p-4 md:p-6 border-2 border-border shadow-sm mb-8"
           >
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
               Seleções dos Clientes
@@ -547,7 +607,7 @@ export default function ProjectDetailPage() {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-border">
                     <div className="text-center">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <CheckCircle className="w-4 h-4 text-primary" />
@@ -624,7 +684,7 @@ export default function ProjectDetailPage() {
                           </button>
                         )}
                       </div>
-                      <div className="grid grid-cols-6 gap-2">
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                         {(expandedSelections.has(selection.id) 
                           ? selection.photos 
                           : selection.photos.slice(0, 12)
@@ -687,7 +747,7 @@ export default function ProjectDetailPage() {
                             <p className="text-sm text-green-800 dark:text-green-200 mb-3">
                               Baixe as {selection.photos.length} fotos selecionadas pelo cliente:
                             </p>
-                            <div className="flex gap-3">
+                            <div className="flex flex-col sm:flex-row gap-3">
                               {/* Botão Baixar Todas */}
                               <button
                                 onClick={() => {
@@ -703,9 +763,9 @@ export default function ProjectDetailPage() {
                                     }, index * 500); // Delay de 500ms entre downloads
                                   });
                                 }}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-700 text-white font-semibold rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
+                                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 dark:bg-green-700 text-white font-semibold rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors text-sm md:text-base"
                               >
-                                <Download className="w-5 h-5" />
+                                <Download className="w-4 h-4 md:w-5 md:h-5" />
                                 Baixar Todas ({selection.photos.length})
                               </button>
                               
@@ -714,10 +774,10 @@ export default function ProjectDetailPage() {
                                 onClick={() => {
                                   alert('Funcionalidade em desenvolvimento: selecione as fotos desejadas primeiro');
                                 }}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors opacity-50 cursor-not-allowed"
+                                className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors opacity-50 cursor-not-allowed text-sm md:text-base"
                                 disabled
                               >
-                                <Download className="w-5 h-5" />
+                                <Download className="w-4 h-4 md:w-5 md:h-5" />
                                 Baixar Selecionadas
                               </button>
                             </div>
@@ -738,7 +798,7 @@ export default function ProjectDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-6 mb-8"
+            className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-4 md:p-6 mb-8"
           >
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center">
@@ -773,19 +833,19 @@ export default function ProjectDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
           >
-            <h3 className="text-2xl font-display font-semibold text-gray-900 dark:text-white mb-6">
+            <h3 className="text-xl md:text-2xl font-display font-semibold text-gray-900 dark:text-white mb-6">
               Fotos do Projeto
             </h3>
             
             {loadingPhotos ? (
-              <div className="bg-card text-card-foreground rounded-lg p-8 border-2 border-border shadow-sm text-center">
+              <div className="bg-card text-card-foreground rounded-lg p-4 md:p-8 border-2 border-border shadow-sm text-center">
                 <RefreshCw className="h-8 w-8 mx-auto mb-4 text-muted-foreground animate-spin" />
                 <p className="text-muted-foreground">Carregando fotos...</p>
               </div>
             ) : photos.length > 0 ? (
               <PhotoGallery photos={photos} />
             ) : (
-              <div className="bg-card text-card-foreground rounded-lg p-8 border-2 border-border shadow-sm text-center">
+              <div className="bg-card text-card-foreground rounded-lg p-4 md:p-8 border-2 border-border shadow-sm text-center">
                 <Camera className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
                 <p className="text-muted-foreground mb-4">
                   Nenhuma foto sincronizada ainda.
@@ -794,7 +854,7 @@ export default function ProjectDetailPage() {
                   <button
                     onClick={handleSync}
                     disabled={syncing}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors border-2 border-border"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors border-2 border-border w-full sm:w-auto"
                   >
                     <RefreshCw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />
                     Sincronizar com Drive

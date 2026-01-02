@@ -11,10 +11,13 @@ export interface DrivePreviewResponse {
 }
 
 export interface DriveSyncResponse {
+  success: boolean;
   message: string;
-  syncedPhotos: number;
-  totalImages: number;
-  errors: string[];
+  data: {
+    syncedCount: number;
+    totalImages: number;
+    errors?: string[];
+  };
 }
 
 export interface DriveCheckResponse {

@@ -5,6 +5,7 @@ import { Camera, CheckCircle, Info, Send, X, AlertCircle } from 'lucide-react';
 import { galleryService } from '../services/gallery.service';
 import { selectionService } from '../services/selection.service';
 import PhotoGallery from '../components/PhotoGallery';
+import SEO from '../components/SEO';
 
 export default function GalleryPage() {
   const { token } = useParams<{ token: string }>();
@@ -125,7 +126,7 @@ export default function GalleryPage() {
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
         {/* Header */}
         <header className="border-b border-border bg-background">
-          <div className="container mx-auto px-4 py-6">
+          <div className="container mx-auto px-4 py-4 md:py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Camera className="w-8 h-8 text-primary" />
@@ -186,7 +187,15 @@ export default function GalleryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+    <>
+      <SEO
+        title={`${project?.name || 'Galeria de Fotos'} - ${project?.photographer?.name || 'Fotógrafo'} | Polaris`}
+        description={`Galeria profissional de fotos do projeto ${project?.name || ''}. ${photos.length} fotos disponíveis para seleção. ${project?.description || 'Visualize e selecione suas fotos favoritas.'}`}
+        keywords="galeria de fotos, seleção de fotos, fotógrafo profissional, portfólio fotográfico, fotos casamento, ensaio fotográfico, evento"
+        url={`/gallery/${token}`}
+        image={photos.length > 0 ? photos[0]?.url : undefined}
+      />
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
       <header className="border-b border-border bg-background">
         <div className="container mx-auto px-4 py-6">
@@ -200,7 +209,7 @@ export default function GalleryPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-8 md:py-12">
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -374,7 +383,7 @@ export default function GalleryPage() {
               </div>
 
               {/* Content */}
-              <div className="p-6 space-y-6 overflow-y-auto max-h-[60vh]">
+              <div className="p-4 md:p-6 space-y-6 overflow-y-auto max-h-[60vh]">
                 {/* Resumo da seleção */}
                 <div>
                   <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Resumo da Seleção</h3>
@@ -455,7 +464,7 @@ export default function GalleryPage() {
               </div>
 
               {/* Footer */}
-              <div className="bg-gray-50 dark:bg-gray-800 p-6 flex items-center justify-end gap-4 border-t-2 border-border">
+              <div className="bg-gray-50 dark:bg-gray-800 p-4 md:p-6 flex flex-col sm:flex-row items-center justify-end gap-4 border-t-2 border-border">
                 <button
                   onClick={() => setShowConfirmModal(false)}
                   disabled={submitting}
@@ -491,5 +500,6 @@ export default function GalleryPage() {
         <p>Powered by Polaris • Gestão de Galerias Profissionais</p>
       </footer>
     </div>
+    </>
   );
 }

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Camera, LogOut, Plus, Search, Filter, Image, CheckCircle, Archive, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Camera, LogOut, Plus, Search, Filter, Image, CheckCircle, Archive, Clock, Menu, X } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { projectService } from '../services/project.service';
 import type { Project } from '../types/project';
+import SEO from '../components/SEO';
 
 export default function ProjectsPage() {
   const { user, logout } = useAuthStore();
@@ -14,6 +15,7 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     loadProjects();
@@ -95,7 +97,15 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+    <>
+      <SEO
+        title={`Projetos - ${user?.name || 'Fotógrafo'} | Polaris`}
+        description={`Gerencie todos os seus projetos fotográficos na Polaris. ${projects.length} projetos totais, organização por status e busca avançada. Plataforma completa para fotógrafos profissionais.`}
+        keywords="projetos fotográficos, gestão de projetos, organização de fotos, portfólio fotográfico, projetos ativos, projetos finalizados"
+        url="/projects"
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header - Navbar melhorada */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4 py-4">
@@ -135,18 +145,75 @@ export default function ProjectsPage() {
                 onClick={handleLogout}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary transition-colors"
+                className="hidden sm:flex items-center gap-2 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary transition-colors"
               >
                 <LogOut className="w-4 h-4" strokeWidth={2} />
                 <span className="font-medium">Sair</span>
               </motion.button>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl"
+            >
+              <div className="container mx-auto px-4 py-4 space-y-2">
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/projects"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg bg-primary/10 text-primary font-semibold transition-colors"
+                >
+                  Projetos
+                </Link>
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Perfil
+                </Link>
+                <div className="border-t border-gray-200 dark:border-gray-800 pt-2 mt-4">
+                  <span className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    {user?.name}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-left flex items-center gap-2 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                  >
+                    <LogOut className="w-4 h-4" strokeWidth={2} />
+                    Sair
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-8 md:py-12">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <motion.div
@@ -306,5 +373,6 @@ export default function ProjectsPage() {
         )}
       </main>
     </div>
+    </>
   );
 }

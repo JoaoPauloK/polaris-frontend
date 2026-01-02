@@ -4,6 +4,7 @@ import { Camera, Mail, Lock, User, Phone, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/authStore';
+import SEO from '../components/SEO';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -29,7 +30,15 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-4 py-12">
+    <>
+      <SEO
+        title="Criar Conta - Polaris | Plataforma Gratuita para Fotógrafos"
+        description="Cadastre-se gratuitamente na Polaris e comece a gerenciar seus projetos fotográficos. Integração com Google Drive, galerias profissionais e seleção online de clientes."
+        keywords="cadastro fotógrafo, plataforma gratuita, google drive, gestão de projetos, fotógrafo profissional, galeria de fotos"
+        url="/register"
+        noIndex={true}
+      />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -140,5 +149,6 @@ export default function RegisterPage() {
         </div>
       </motion.div>
     </div>
+    </>
   );
 }

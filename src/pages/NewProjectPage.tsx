@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Camera, LogOut, ArrowLeft, Cloud } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Camera, LogOut, ArrowLeft, Cloud, Menu, X } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { projectService } from '../services/project.service';
 import { driveService } from '../services/drive.service';
@@ -12,6 +12,7 @@ export default function NewProjectPage() {
   const [loading, setLoading] = useState(false);
   const [checkingDrive, setCheckingDrive] = useState(false);
   const [driveValid, setDriveValid] = useState<boolean | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -153,18 +154,75 @@ export default function NewProjectPage() {
               </span>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 border-2 border-border rounded-lg hover:border-primary transition-colors"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 border-2 border-border rounded-lg hover:border-primary transition-colors"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Sair</span>
               </button>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl"
+            >
+              <div className="container mx-auto px-4 py-4 space-y-2">
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/projects"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Projetos
+                </Link>
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Perfil
+                </Link>
+                <div className="border-t border-gray-200 dark:border-gray-800 pt-2 mt-4">
+                  <span className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
+                    {user?.name}
+                  </span>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full text-left flex items-center gap-2 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                  >
+                    <LogOut className="w-4 h-4" strokeWidth={2} />
+                    Sair
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12 max-w-3xl">
+      <main className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
         <Link
           to="/projects"
           className="inline-flex items-center gap-2 text-primary hover:underline mb-6"

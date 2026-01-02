@@ -108,7 +108,7 @@ export default function EditProjectPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-card text-card-foreground rounded-lg p-8 border-2 border-border shadow-sm"
+          className="bg-card text-card-foreground rounded-lg p-6 md:p-8 border-2 border-border shadow-sm"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Nome */}
@@ -213,7 +213,7 @@ export default function EditProjectPage() {
             </div>
 
             {/* Botões */}
-            <div className="flex items-center justify-end gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-4 pt-4">
               <button
                 type="button"
                 onClick={() => navigate(`/projects/${id}`)}

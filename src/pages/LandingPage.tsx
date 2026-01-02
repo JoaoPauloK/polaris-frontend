@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { 
   Camera, Image, Users, CheckCircle, Zap, Shield, TrendingUp, 
   Clock, Award, ChevronRight, Play, 
   Upload, Eye, Download, Sparkles, Heart, Briefcase, Baby, 
-  Home, Palette, Globe, Check, X, Twitter, Instagram, Facebook, Linkedin
+  Home, Palette, Globe, Check, X, Twitter, Instagram, Facebook, Linkedin,
+  Menu
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import SEO from '../components/SEO';
 
 export default function LandingPage() {
   const fadeInUp = {
@@ -30,8 +33,18 @@ export default function LandingPage() {
     }
   };
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 overflow-hidden">
+    <>
+      <SEO
+        title="Polaris - Plataforma para Fotógrafos Profissionais | Galerias de Fotos Online"
+        description="Transforme suas fotos do Google Drive em galerias profissionais com marca d'água. Gestão completa de projetos fotográficos, seleção online de clientes e entrega automatizada. Gratuito para começar!"
+        keywords="fotografia profissional, galeria de fotos online, google drive integração, seleção de fotos, fotógrafo, gestão de projetos, marca d'água, clientes, portfólio fotográfico, casamento, ensaio, evento"
+        url="/"
+        image="/og-landing.jpg"
+      />
+      <div className="min-h-screen bg-white dark:bg-gray-900 overflow-hidden">
       {/* Header - Navbar melhorada */}
       <motion.header 
         initial={{ y: -100 }}
@@ -77,11 +90,11 @@ export default function LandingPage() {
             <div className="flex items-center gap-4">
               <Link
                 to="/login"
-                className="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors font-medium"
+                className="hidden sm:inline text-gray-600 dark:text-gray-300 hover:text-primary transition-colors font-medium"
               >
                 Entrar
               </Link>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="hidden sm:block">
                 <Link
                   to="/register"
                   className="px-6 py-2.5 bg-primary text-white rounded-full hover:shadow-lg hover:shadow-primary/50 transition-all font-semibold flex items-center gap-2"
@@ -90,13 +103,78 @@ export default function LandingPage() {
                   <ChevronRight className="w-4 h-4" strokeWidth={3} />
                 </Link>
               </motion.div>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
             </div>
           </div>
         </nav>
       </motion.header>
 
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl"
+          >
+            <div className="container mx-auto px-4 py-4 space-y-4">
+              <a
+                href="#features"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+              >
+                Recursos
+              </a>
+              <a
+                href="#how-it-works"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+              >
+                Como Funciona
+              </a>
+              <a
+                href="#pricing"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+              >
+                Preços
+              </a>
+              <a
+                href="#testimonials"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+              >
+                Depoimentos
+              </a>
+              <div className="border-t border-gray-200 dark:border-gray-800 pt-4 space-y-4">
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors font-medium"
+                >
+                  Entrar
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-semibold text-center"
+                >
+                  Começar Grátis
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero Section - Melhorado */}
-      <section className="relative container mx-auto px-4 pt-20 pb-32">
+      <section className="relative container mx-auto px-4 pt-12 md:pt-20 pb-16 md:pb-32">
         {/* Background decorativo */}
         <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute top-20 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
@@ -801,5 +879,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
