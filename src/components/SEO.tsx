@@ -10,6 +10,7 @@ interface SEOProps {
   author?: string;
   publishedTime?: string;
   modifiedTime?: string;
+  noIndex?: boolean;
 }
 
 export default function SEO({
@@ -22,6 +23,7 @@ export default function SEO({
   author,
   publishedTime,
   modifiedTime,
+  noIndex = false,
 }: SEOProps) {
   const siteUrl = 'https://mypolaris.vercel.app';
   const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
@@ -34,7 +36,7 @@ export default function SEO({
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       <meta name="author" content={author || 'Polaris'} />
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
       <meta name="language" content="pt-BR" />
       <link rel="canonical" href={fullUrl} />
 
