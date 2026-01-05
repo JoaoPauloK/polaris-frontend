@@ -99,14 +99,6 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
-
-          <div className="mt-6 pt-6 border-t">
-            <p className="text-sm text-muted-foreground text-center">
-              <strong>Teste com:</strong><br />
-              Email: ana@exemplo.com<br />
-              Senha: demo123
-            </p>
-          </div>
         </div>
       </motion.div>
     </div>
