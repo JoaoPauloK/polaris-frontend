@@ -1,20 +1,20 @@
 # Polaris Frontend
 
-## Visão Geral
+## Overview
 
-Este repositório contém o frontend do Polaris, um sistema de galerias fotográficas profissionais. O frontend é desenvolvido em React com TypeScript, utilizando Vite para build, Tailwind CSS para estilização e Zustand para gerenciamento de estado. Ele consome a API RESTful do backend para autenticação, gerenciamento de projetos, fotos e seleções.
+This repository contains the frontend for Polaris, a professional photography gallery system. The frontend is built with React and TypeScript, using Vite for builds, Tailwind CSS for styling, and Zustand for state management. It consumes the backend REST API for authentication, project management, photos, and selections.
 
-## Estrutura do Projeto
+## Project Structure
 
-- `src/App.tsx`: Definição das rotas e layout principal.
-- `src/pages/`: Páginas principais (Landing, Login, Dashboard, Projects, Profile, etc).
-- `src/components/`: Componentes reutilizáveis (PhotoGallery, Navbar, etc).
-- `src/services/`: Serviços de integração com a API (auth, project, drive, etc).
-- `src/store/`: Gerenciamento de estado global (authStore, projectStore).
-- `src/types/`: Tipos TypeScript compartilhados.
-- `src/utils/`: Funções utilitárias.
+- `src/App.tsx`: Main route definitions and layout.
+- `src/pages/`: Core pages (Landing, Login, Dashboard, Projects, Profile, etc.).
+- `src/components/`: Reusable UI components (PhotoGallery, Navbar, etc.).
+- `src/services/`: API integration services (auth, project, drive, etc.).
+- `src/store/`: Global state management (authStore, projectStore).
+- `src/types/`: Shared TypeScript types.
+- `src/utils/`: Utility functions.
 
-## Principais Tecnologias
+## Main Technologies
 
 - React 18
 - TypeScript
@@ -25,26 +25,30 @@ Este repositório contém o frontend do Polaris, um sistema de galerias fotográ
 - Axios
 - Framer Motion
 
-## Configuração e Execução
+## Setup and Execution
 
-1. Instale as dependências:
+1. Install dependencies:
    ```sh
    npm install
    ```
-2. Configure as variáveis de ambiente em `.env` (exemplo em `.env.example`).
-3. Inicie o servidor de desenvolvimento:
+2. Configure environment variables in `.env` (example: `.env.example`, if available).
+3. Start the development server:
    ```sh
    npm run dev
    ```
 
-## Scripts Úteis
+## Useful Scripts
 
-- `npm run dev` — Inicia o servidor de desenvolvimento
-- `npm run build` — Gera o build de produção
-- `npm run preview` — Visualiza o build de produção localmente
+- `npm run dev` — Starts the development server
+- `npm run build` — Builds the production bundle
+- `npm run preview` — Previews the production build locally
 
-## Observações
+## Notes
 
-- O frontend espera que o backend esteja rodando e acessível via URL configurada em `VITE_API_URL`.
-- A autenticação é feita via cookies httpOnly, enviados automaticamente pelo navegador.
-- As imagens são servidas diretamente do Google Drive via URLs públicas.
+- The frontend expects the backend to be running and accessible through the URL configured in `VITE_API_URL`.
+- Authentication is handled via httpOnly cookies, which are sent automatically by the browser.
+- Images are served directly from Google Drive through public URLs.
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
